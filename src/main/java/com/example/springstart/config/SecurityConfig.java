@@ -24,7 +24,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
-        http.cors((cors) -> cors
+        http
+                .cors((cors) -> cors
                 .configurationSource(new CorsConfigurationSource(){
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
