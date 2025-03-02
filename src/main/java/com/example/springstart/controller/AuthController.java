@@ -2,7 +2,7 @@ package com.example.springstart.controller;
 
 import com.example.springstart.domain.user.dto.LoginRequestDto;
 import com.example.springstart.domain.user.dto.TokenResponseDto;
-import com.example.springstart.domain.user.service.UserService;
+import com.example.springstart.domain.user.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")  // 모든 엔드포인트가 /api/v1/auth 로 시작
 @RequiredArgsConstructor
 //@Tag(name = "Auth APIs", description = "인증 관련 API 목록")
-public class UserController {
+public class AuthController {
 
     // 인증 관련 비즈니스 로직을 처리하는 서비스 (DI 주입)
-    private final UserService userService;
+    private final AuthService authService;
 
     /**
      * 로그인 API
@@ -56,7 +56,7 @@ public class UserController {
         log.info("로그인 요청: {}", loginRequestDto.getUsername());
 
         // AuthService를 이용하여 로그인 처리 및 토큰 발급
-        TokenResponseDto tokenResponseDto = userService.login(loginRequestDto);
+        TokenResponseDto tokenResponseDto = authService.login(loginRequestDto);
 
         log.info("로그인 성공 - 사용자: {}", loginRequestDto.getUsername());
 
@@ -88,7 +88,7 @@ public class UserController {
         log.info("로그아웃 요청 - 토큰: {}", bearerToken);
 
         // AuthService를 이용하여 로그아웃 처리 (토큰 블랙리스트 처리 등)
-        userService.logout(bearerToken);
+        authService.logout(bearerToken);
 
         log.info("로그아웃 성공");
 
@@ -127,7 +127,7 @@ public class UserController {
         log.info("토큰 재발급 요청 - Refresh Token: {}", bearerToken);
 
         // AuthService를 이용하여 새로운 액세스 토큰을 발급받음
-        TokenResponseDto tokenResponseDto = userService.refresh(bearerToken);
+        TokenResponseDto tokenResponseDto = authService.refresh(bearerToken);
 
         log.info("토큰 재발급 성공 - 새로운 액세스 토큰 발급됨");
 
