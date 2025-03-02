@@ -10,7 +10,9 @@ import com.example.springstart.domain.user.entity.UserRoleType;
 import com.example.springstart.domain.user.jwt.JwtTokenProvider;
 import com.example.springstart.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +20,6 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
 
     @Override
     public void join(JoinRequestDto dto) {

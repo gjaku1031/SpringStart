@@ -1,5 +1,6 @@
 package com.example.springstart.controller;
 
+import com.example.springstart.domain.user.dto.JoinRequestDto;
 import com.example.springstart.domain.user.dto.LoginRequestDto;
 import com.example.springstart.domain.user.dto.TokenResponseDto;
 import com.example.springstart.domain.user.service.AuthService;
@@ -24,6 +25,12 @@ public class AuthController {
 
     // 인증 관련 비즈니스 로직을 처리하는 서비스 (DI 주입)
     private final AuthService authService;
+
+    @PostMapping("/join")
+    public String join(@Valid @RequestBody JoinRequestDto dto) {
+        authService.join(dto);
+        return "OK";
+    }
 
     /**
      * 로그인 API
