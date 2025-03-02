@@ -1,6 +1,7 @@
 package com.example.springstart.domain.user.entity;
 
 import com.example.springstart.domain.common.BaseEntity;
+import com.example.springstart.domain.user.dto.UserUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,5 +27,10 @@ public class User extends BaseEntity {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public void updateUser(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 }
