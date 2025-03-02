@@ -1,4 +1,4 @@
-package com.example.springstart.domain.common.entiry;
+package com.example.springstart.domain.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -23,6 +23,5 @@ public class BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
 
 }

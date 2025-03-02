@@ -1,7 +1,8 @@
 package com.example.springstart.domain.user.entity;
 
-import com.example.springstart.domain.common.entiry.BaseEntity;
+import com.example.springstart.domain.common.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +21,10 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRoleType role;
 
+    @Builder
+    public User(String username, String password, UserRoleType role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 }
