@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         String encodedPassword = passwordEncoder.encode(dto.getPassword()); // 비밀번호 암호화
-        user.updateUser(dto.getUsername(), encodedPassword); // 변경
+        user.updateUser(dto.getUsername(), encodedPassword);
 
         userRepository.save(user);
         return new UserUpdateResponseDto(user);
