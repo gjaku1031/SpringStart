@@ -4,12 +4,14 @@ import com.example.springstart.domain.user.dto.JoinRequestDto;
 import com.example.springstart.domain.user.dto.LoginRequestDto;
 import com.example.springstart.domain.user.dto.TokenResponseDto;
 import com.example.springstart.domain.user.service.AuthService;
-import com.example.springstart.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 인증 및 토큰 관련 API를 제공하는 컨트롤러.
@@ -21,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping  // 모든 엔드포인트가 /api/v1/auth 로 시작
 @RequiredArgsConstructor
-//@Tag(name = "Auth APIs", description = "인증 관련 API 목록")
 public class AuthController {
 
     // 인증 관련 비즈니스 로직을 처리하는 서비스 (DI 주입)
@@ -30,6 +31,8 @@ public class AuthController {
     @PostMapping("/join")
     public ResponseEntity<String> join(@Valid @RequestBody JoinRequestDto dto) {
         authService.join(dto);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "회원가입 완료");
         return ResponseEntity.ok("회원가입");
     }
 
@@ -42,24 +45,6 @@ public class AuthController {
      * @return TokenResponseDto (Access Token, Refresh Token 포함)
      */
     @PostMapping("/login")
-/*    @Operation(summary = "로그인", description = "아이디와 패스워드를 JSON으로 받아서 로그인한다.")
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK - 로그인 성공",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "UNAUTHORIZED - 로그인 실패 (잘못된 아이디 또는 비밀번호)",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "INTERNAL SERVER ERROR - 서버 에러",
-                    content = @Content(mediaType = "application/json")
-            )
-    })*/
     public ResponseEntity<TokenResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         log.info("로그인 요청: {}", loginRequestDto.getUsername());
 
@@ -81,17 +66,6 @@ public class AuthController {
      * @return HTTP 204 (No Content) - 성공적으로 로그아웃됨
      */
     @PostMapping("/logout")
-/*    @Operation(summary = "로그아웃", description = "Access Token을 전달받아 로그아웃 처리.")
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO CONTENT - 로그아웃 성공"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "INTERNAL SERVER ERROR - 서버 에러"
-            )
-    })*/
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String bearerToken) {
         log.info("로그아웃 요청 - 토큰: {}", bearerToken);
 
@@ -113,24 +87,6 @@ public class AuthController {
      * @return 새로운 Access Token (JSON 응답)
      */
     @PostMapping("/refresh")
-/*    @Operation(summary = "토큰 재발급", description = "Refresh Token을 이용하여 새로운 Access Token을 발급.")
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK - 새 액세스 토큰 발급 성공",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "UNAUTHORIZED - Refresh Token이 유효하지 않음",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "INTERNAL SERVER ERROR - 서버 에러",
-                    content = @Content(mediaType = "application/json")
-            )
-    })*/
     public ResponseEntity<TokenResponseDto> refresh(@RequestHeader("Authorization") String bearerToken) {
         log.info("토큰 재발급 요청 - Refresh Token: {}", bearerToken);
 

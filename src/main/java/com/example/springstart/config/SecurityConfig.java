@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,17 +29,29 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
+                .logout(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authorizeHttpRequests(request ->
-                        request.requestMatchers("/", "/join", "/login").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/",
+                                "/join", "/login",
+                                "/logout",
+                                "/refresh",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**").permitAll()
+                        .anyRequest().authenticated()
                 );
 
         return http.build();
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){
