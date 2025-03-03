@@ -1,7 +1,6 @@
 package com.example.springstart.domain.user.entity;
 
 import com.example.springstart.domain.common.BaseEntity;
-import com.example.springstart.domain.user.dto.UserUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

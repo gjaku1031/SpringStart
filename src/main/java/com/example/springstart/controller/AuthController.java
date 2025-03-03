@@ -4,6 +4,7 @@ import com.example.springstart.domain.user.dto.JoinRequestDto;
 import com.example.springstart.domain.user.dto.LoginRequestDto;
 import com.example.springstart.domain.user.dto.TokenResponseDto;
 import com.example.springstart.domain.user.service.AuthService;
+import com.example.springstart.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/auth")  // 모든 엔드포인트가 /api/v1/auth 로 시작
+@RequestMapping  // 모든 엔드포인트가 /api/v1/auth 로 시작
 @RequiredArgsConstructor
 //@Tag(name = "Auth APIs", description = "인증 관련 API 목록")
 public class AuthController {
@@ -27,9 +28,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/join")
-    public String join(@Valid @RequestBody JoinRequestDto dto) {
+    public ResponseEntity<String> join(@Valid @RequestBody JoinRequestDto dto) {
         authService.join(dto);
-        return "OK";
+        return ResponseEntity.ok("회원가입");
     }
 
     /**

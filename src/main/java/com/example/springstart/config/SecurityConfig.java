@@ -24,26 +24,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
-        http
-                .cors((cors) -> cors
-                .configurationSource(new CorsConfigurationSource(){
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                        CorsConfiguration configuration = new CorsConfiguration();
-
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-
-                        return null;
-
-                    }
-                }));
-
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -53,8 +33,8 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authorizeHttpRequests(request->
-                        request.requestMatchers("/").permitAll()
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers("/", "/join", "/login").permitAll()
                 );
 
         return http.build();

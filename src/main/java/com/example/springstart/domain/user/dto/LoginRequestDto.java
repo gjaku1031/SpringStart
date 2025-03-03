@@ -2,7 +2,6 @@ package com.example.springstart.domain.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class LoginRequestDto {

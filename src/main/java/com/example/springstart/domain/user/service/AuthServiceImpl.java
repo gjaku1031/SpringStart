@@ -1,7 +1,6 @@
 package com.example.springstart.domain.user.service;
 
 
-
 import com.example.springstart.domain.user.dto.JoinRequestDto;
 import com.example.springstart.domain.user.dto.LoginRequestDto;
 import com.example.springstart.domain.user.dto.TokenResponseDto;
@@ -10,9 +9,9 @@ import com.example.springstart.domain.user.entity.UserRoleType;
 import com.example.springstart.domain.user.jwt.JwtTokenProvider;
 import com.example.springstart.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +19,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void join(JoinRequestDto dto) {
@@ -30,9 +30,11 @@ public class AuthServiceImpl implements AuthService {
             return;
         }
 
+        String encodedPassword = passwordEncoder.encode(password);
+
         User user = User.builder()
                 .username(username)
-                .password(password)
+                .password(encodedPassword)
                 .role(UserRoleType.USER)
                 .build();
         userRepository.save(user);
@@ -46,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다"));
 
-        if(!password.equals(user.getPassword())) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("패스워드가 일치하지 않습니다");
         }
 
