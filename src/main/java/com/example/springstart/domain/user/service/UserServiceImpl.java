@@ -1,5 +1,7 @@
 package com.example.springstart.domain.user.service;
 
+import com.example.springstart.domain.user.dto.PasswordUpdateRequestDto;
+import com.example.springstart.domain.user.dto.PasswordUpdateResponseDto;
 import com.example.springstart.domain.user.dto.UserUpdateRequestDto;
 import com.example.springstart.domain.user.dto.UserUpdateResponseDto;
 import com.example.springstart.domain.user.entity.User;
@@ -15,21 +17,40 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Override
     public UserUpdateResponseDto updateUser(Long id, UserUpdateRequestDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        String encodedPassword = passwordEncoder.encode(dto.getPassword()); // 비밀번호 암호화
-        user.updateUser(dto.getUsername(), encodedPassword);
+        user.updateUser(dto.getUsername(), dto.getEmail());
 
         userRepository.save(user);
         return new UserUpdateResponseDto(user);
     }
 
+    @Override
     public void deleteUser(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         userRepository.delete(user);
+    }
+
+    @Override
+    public PasswordUpdateResponseDto updatePassword(Long id, PasswordUpdateRequestDto dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Wrong password");
+        }
+
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+            throw new IllegalArgumentException("New passwords don't match");
+        }
+
+        String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
+        user.updatePassword(encodedPassword);
+        return new PasswordUpdateResponseDto(); //비밀번호 body에 노출 위험 -> 메시지 반환
     }
 }

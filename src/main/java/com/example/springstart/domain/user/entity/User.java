@@ -15,21 +15,32 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Column(nullable = false)
     String username;
+
+    @Column(nullable = false)
     String password;
 
     @Enumerated(EnumType.STRING)
     private UserRoleType role;
 
+    @Column(nullable = false)
+    String email;
+
     @Builder
-    public User(String username, String password, UserRoleType role) {
+    public User(String username, String password, UserRoleType role, String email) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.email = email;
     }
 
-    public void updateUser(String username, String password) {
+    public void updateUser(String username, String email) {
         this.username = username;
+        this.email = email;
+    }
+
+    public void updatePassword(String password) {
         this.password = password;
     }
 }

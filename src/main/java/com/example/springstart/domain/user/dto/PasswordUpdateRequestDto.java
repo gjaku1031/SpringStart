@@ -1,19 +1,22 @@
 package com.example.springstart.domain.user.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
-public class UserUpdateRequestDto {
+@Getter
+public class PasswordUpdateRequestDto {
 
     @NotBlank
     @Size(min = 2, max = 20)
-    private String username;
+    String currentPassword;
 
-    @Email
     @NotBlank
     @Size(min = 2, max = 20)
-    private String email;
+    String newPassword;
+
+    @NotBlank
+    @Size(min = 2, max = 20)
+    String confirmPassword;
+
 }

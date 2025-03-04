@@ -1,6 +1,7 @@
 package com.example.springstart.domain.user.dto;
 
 import com.example.springstart.domain.user.entity.User;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -11,10 +12,11 @@ public class UserUpdateResponseDto {
     private String username;
 
     @NotBlank
-    private String password;
+    @Email
+    private String email;
 
     public UserUpdateResponseDto(User user) {
         this.username = user.getUsername();
-        this.password = user.getPassword();
+        this.email = user.getEmail();
     }
 }
