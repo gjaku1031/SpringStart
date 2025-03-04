@@ -1,6 +1,5 @@
 package com.example.springstart.domain.user.service;
 
-
 import com.example.springstart.domain.user.dto.JoinRequestDto;
 import com.example.springstart.domain.user.dto.LoginRequestDto;
 import com.example.springstart.domain.user.dto.TokenResponseDto;
@@ -17,16 +16,21 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public void join(JoinRequestDto dto) {
         String username = dto.getUsername();
         String password = dto.getPassword();
+        String confirmPassword = dto.getConfirmPassword();
 
         if (userRepository.existsByUsername(username)) {
             return;
+        }
+
+        if (password.equals(confirmPassword)) {
+            throw new IllegalArgumentException("New passwords don't match");
         }
 
         String encodedPassword = passwordEncoder.encode(password);

@@ -18,9 +18,8 @@ public class UserController {
     private final UserService userService;
 
     @PatchMapping("/{id}/password") // PATCH 사용: 부분 업데이트에 적합
-    public ResponseEntity<PasswordUpdateResponseDto> updatePassword(
-            @PathVariable Long id,
-            @Valid @RequestBody PasswordUpdateRequestDto dto) {
+    public ResponseEntity<PasswordUpdateResponseDto> updatePassword(@PathVariable Long id,
+                                                                    @Valid @RequestBody PasswordUpdateRequestDto dto) {
 
         PasswordUpdateResponseDto response = userService.updatePassword(id, dto);
         return ResponseEntity.ok(response);

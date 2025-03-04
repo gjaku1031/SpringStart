@@ -29,14 +29,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        userRepository.delete(user);
-    }
-
-    @Override
     public PasswordUpdateResponseDto updatePassword(Long id, PasswordUpdateRequestDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -51,6 +43,17 @@ public class UserServiceImpl implements UserService {
 
         String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
         user.updatePassword(encodedPassword);
+
+        userRepository.save(user);
+
         return new PasswordUpdateResponseDto(); //비밀번호 body에 노출 위험 -> 메시지 반환
+    }
+
+    @Override
+    public void deleteUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        userRepository.delete(user);
     }
 }
