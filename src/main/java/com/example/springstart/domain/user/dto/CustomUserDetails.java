@@ -16,6 +16,7 @@ public class CustomUserDetails implements UserDetails {
     private final String username;
     private final String password;
     private final List<GrantedAuthority> authorities;
+    private boolean banned;
 
     /**
      * User 엔티티를 기반으로 CustomUserDetails 생성
@@ -25,6 +26,8 @@ public class CustomUserDetails implements UserDetails {
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        this.banned = user.getIsBanned();
+
     }
 
     @Override
@@ -54,6 +57,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return !banned;
     }
 }

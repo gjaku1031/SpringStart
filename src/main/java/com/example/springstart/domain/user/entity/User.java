@@ -27,12 +27,22 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     String email;
 
+    @Column(nullable = false)
+    Boolean isBanned = false;
+
     @Builder
     public User(String username, String password, UserRoleType role, String email) {
         this.username = username;
         this.password = password;
         this.role = role;
         this.email = email;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (isBanned == null) {
+            isBanned = false;
+        }
     }
 
     public void updateUser(String username, String email) {
