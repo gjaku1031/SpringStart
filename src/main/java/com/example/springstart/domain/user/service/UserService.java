@@ -12,5 +12,5 @@ public interface UserService {
 
     public void deleteUser(String username);
 
-    public PasswordUpdateResponseDto updatePassword(Long id, PasswordUpdateRequestDto dto);
+    public PasswordUpdateResponseDto updatePassword(PasswordUpdateRequestDto dto);
 }

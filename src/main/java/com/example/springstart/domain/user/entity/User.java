@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class User extends BaseEntity {
+public class User extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,9 @@ public class User extends BaseEntity {
     String email;
 
     @Column(nullable = false)
-    Boolean isBanned = false;
+    Boolean Banned = false;
+
+    Integer passwordCount;
 
     @Builder
     public User(String username, String password, UserRoleType role, String email) {
@@ -40,8 +42,10 @@ public class User extends BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        if (isBanned == null) {
-            isBanned = false;
+        passwordCount = 0;
+
+        if (Banned == null) {
+            Banned = false;
         }
     }
 
@@ -54,8 +58,7 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
-    public void updateBan(boolean isBanned) {
-        this.isBanned = isBanned;
+    public void updateBan(boolean Banned) {
+        this.Banned = Banned;
     }
-
 }

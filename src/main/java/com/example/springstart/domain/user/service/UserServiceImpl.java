@@ -30,17 +30,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PasswordUpdateResponseDto updatePassword(Long id, PasswordUpdateRequestDto dto) {
-        User user = userRepository.findById(id)
+    public PasswordUpdateResponseDto updatePassword(PasswordUpdateRequestDto dto) {
+        User user = userRepository.findByUsername(dto.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Wrong password");
         }
 
-        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+/*        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
             throw new IllegalArgumentException("New passwords don't match");
-        }
+        }*/
 
         String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
         user.updatePassword(encodedPassword);

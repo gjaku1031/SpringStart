@@ -1,7 +1,11 @@
 package com.example.springstart.config;
 
 import com.example.springstart.domain.user.entity.UserRoleType;
+import com.example.springstart.domain.user.handler.AuthenticationEntryPointImpl;
+import com.example.springstart.domain.user.jwt.JwtAuthenticationFilter;
+import com.example.springstart.domain.user.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -16,6 +20,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -23,7 +29,9 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final JwtTokenProvider jwtTokenProvider;
 
     //시큐리티 role 수직적 게층 시큐리티에 적용
     @Bean
@@ -34,7 +42,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider) throws Exception{
 
 
         http
@@ -46,19 +54,28 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class
+                )
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .authenticationEntryPoint(new AuthenticationEntryPointImpl())
+                                .accessDeniedHandler(new AccessDeniedHandlerImpl()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/",
+                        .requestMatchers("/**",
                                 "/join", "/login",
-                                "/logout",
+                                "/logout", "/ban",
                                 "/refresh",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/api-docs/**",
                                 "/swagger-ui.html",
+                                "/delete",
+                                "/updatePassword",
                                 "/swagger-resources/**").permitAll()
                         .anyRequest().authenticated()
                 );
-
         return http.build();
     }
 

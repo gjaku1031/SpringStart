@@ -14,11 +14,17 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/{id}/password")
-    public ResponseEntity<PasswordUpdateResponseDto> updatePassword(@PathVariable Long id,
-                                                                    @Valid @RequestBody PasswordUpdateRequestDto dto) {
+    @PostMapping("/updatePassword")
+    public ResponseEntity<PasswordUpdateResponseDto> updatePassword(
+            @Valid @RequestBody PasswordUpdateRequestDto dto) {
 
-        PasswordUpdateResponseDto response = userService.updatePassword(id, dto);
+        PasswordUpdateResponseDto response = userService.updatePassword(dto);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Void> delete(String username) {
+        userService.deleteUser(username);
+        return ResponseEntity.ok().build();
     }
 }

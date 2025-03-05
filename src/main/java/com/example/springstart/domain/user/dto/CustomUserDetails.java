@@ -7,36 +7,49 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    private final String username;
+/*    private final String username;
     private final String password;
     private final List<GrantedAuthority> authorities;
-    private boolean banned;
+    private boolean banned;*/
+
+    private User user;
 
     /**
      * User 엔티티를 기반으로 CustomUserDetails 생성
      * @param user 사용자 엔티티
      */
     public CustomUserDetails(User user) {
-        this.username = user.getUsername();
+        /*this.username = user.getUsername();
         this.password = user.getPassword();
         this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
-        this.banned = user.getIsBanned();
+        this.banned = user.getIsBanned();*/
+        this.user = user;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(
+                new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
+        );
     }
 
     @Override
     public String getPassword() {
-        return password;
+        //return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return username;
+        //return username;
+        return user.getUsername();
     }
 
     @Override
@@ -56,6 +69,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return !banned;
+        //return !banned;
+        return !user.getBanned();
     }
 }

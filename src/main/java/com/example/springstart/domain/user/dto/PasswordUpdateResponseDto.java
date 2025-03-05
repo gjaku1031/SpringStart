@@ -1,7 +1,8 @@
 package com.example.springstart.domain.user.dto;
 
-import com.example.springstart.domain.user.entity.User;
+import lombok.Data;
 
+@Data
 public class PasswordUpdateResponseDto {
     String message;
 

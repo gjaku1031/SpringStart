@@ -1,5 +1,7 @@
 package com.example.springstart.domain.user.jwt;
 
+import com.example.springstart.domain.user.dto.CustomUserDetails;
+import com.example.springstart.domain.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * JWT 인증 필터
@@ -21,6 +25,13 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        log.info("JWT Authentication Filter - shouldNotFilter");
+//        System.out.println(request.getRequestURI());
+//        return request.getRequestURI().equals("/swagger-ui/index.html#/");
+//    }
 
     /**
      * HTTP 요청이 들어올 때마다 실행되는 필터 메서드
@@ -38,13 +49,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 1. HTTP 요청 헤더에서 Authorization 값을 가져와 JWT 토큰을 안전하게 추출
         Optional<String> optionalToken = jwtTokenProvider.resolveToken(request.getHeader("Authorization"));
-
         // 2. 토큰이 존재하고 유효한 경우, SecurityContext에 Authentication 객체를 설정
         optionalToken.filter(this::isUsableAccessToken)
                 .map(jwtTokenProvider::getAuthentication)
                 .ifPresent(authentication -> {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    log.debug("✅ 사용자 인증 완료: {}", authentication.getName());
+                    CustomUserDetails labmdaAuth = (CustomUserDetails) authentication.getPrincipal();
+                    log.info("✅ 사용자 인증 완료: {}", labmdaAuth);
+                    authRef.set(labmdaAuth);
                 });
 
         // 3. 다음 필터로 요청을 전달
@@ -62,6 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @return 유효한 액세스 토큰이면 true, 그렇지 않으면 false
      */
     private boolean isUsableAccessToken(String token) {
+        log.info("JWT Authentication Filter - isUsableAccessToken");
         boolean isValid = jwtTokenProvider.validateToken(token)
                 && !jwtTokenProvider.isBlacklisted(token)
                 && jwtTokenProvider.hasRole(token);

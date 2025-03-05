@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping  // 모든 엔드포인트가 /api/v1/auth 로 시작
+@RequestMapping
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -100,7 +100,7 @@ public class AuthController {
     public ResponseEntity<BanResponseDto> ban(@Valid @RequestBody BanRequestDto dto) {
 
         BanResponseDto banResponseDto = authService.banUser(dto);
-        log.info("{}을 ban 함", dto.getUsername());
+        log.info("{}을 banned = {} 로 바꿈", dto.getUsername(), dto.getBan());
         return ResponseEntity.ok(banResponseDto);
     }
 }

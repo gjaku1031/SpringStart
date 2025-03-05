@@ -13,5 +13,5 @@ public interface AuthService {
 
     TokenResponseDto refresh(String bearerToken);
 
-    public BanResponseDto banUser(BanRequestDto dto);
+    BanResponseDto banUser(BanRequestDto dto);
 }
