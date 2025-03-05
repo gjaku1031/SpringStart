@@ -96,7 +96,8 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByUsername(dto.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        user.updateBan(user.getIsBanned());
+        user.updateBan(dto.getBan());
+        userRepository.save(user);
         return new BanResponseDto();
     }
 }

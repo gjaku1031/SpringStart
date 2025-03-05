@@ -4,6 +4,6 @@ public class BanResponseDto {
     String message;
 
     public BanResponseDto() {
-        this.message = "Ban Successfully";
+        this.message = "Successfully";
     }
 }

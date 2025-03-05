@@ -6,4 +6,5 @@ import lombok.Data;
 public class BanRequestDto {
 
     String username;
+    Boolean ban;
 }
