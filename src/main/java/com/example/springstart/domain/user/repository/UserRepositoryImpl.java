@@ -32,7 +32,10 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
                 .select(Projections.constructor(UserGetResponseDto.class,
                         user.username,
                         user.password,
-                        user.role))
+                        user.role,
+                        user
+
+                ))
                 .from(user)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
