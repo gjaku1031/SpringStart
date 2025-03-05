@@ -52,7 +52,6 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다"));
 
-
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("패스워드가 일치하지 않습니다");
         }

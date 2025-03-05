@@ -5,6 +5,7 @@ import com.example.springstart.domain.user.dto.PasswordUpdateResponseDto;
 import com.example.springstart.domain.user.dto.UserUpdateRequestDto;
 import com.example.springstart.domain.user.dto.UserUpdateResponseDto;
 import com.example.springstart.domain.user.entity.User;
+import com.example.springstart.domain.user.entity.UserRoleType;
 import com.example.springstart.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
