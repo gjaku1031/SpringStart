@@ -1,8 +1,6 @@
 package com.example.springstart.domain.user.service;
 
-import com.example.springstart.domain.user.dto.JoinRequestDto;
-import com.example.springstart.domain.user.dto.LoginRequestDto;
-import com.example.springstart.domain.user.dto.TokenResponseDto;
+import com.example.springstart.domain.user.dto.*;
 import com.example.springstart.domain.user.entity.User;
 import com.example.springstart.domain.user.entity.UserRoleType;
 import com.example.springstart.domain.user.jwt.JwtTokenProvider;
@@ -91,5 +89,14 @@ public class AuthServiceImpl implements AuthService {
                                                    user.getRole().toString()),
                                                    refreshToken
         );
+    }
+
+    @Override
+    public BanResponseDto banUser(BanRequestDto dto) {
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.updateBan(user.getIsBanned());
+        return new BanResponseDto();
     }
 }

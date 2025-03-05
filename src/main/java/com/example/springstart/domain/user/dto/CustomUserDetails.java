@@ -27,7 +27,6 @@ public class CustomUserDetails implements UserDetails {
         this.password = user.getPassword();
         this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
         this.banned = user.getIsBanned();
-
     }
 
     @Override

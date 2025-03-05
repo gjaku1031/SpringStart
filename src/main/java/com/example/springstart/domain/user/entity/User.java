@@ -54,8 +54,8 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
-    public void updateRole(UserRoleType role) {
-        this.role = role;
+    public void updateBan(boolean isBanned) {
+        this.isBanned = isBanned;
     }
 
 }

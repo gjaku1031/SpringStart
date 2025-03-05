@@ -1,8 +1,7 @@
 package com.example.springstart.domain.user.service;
 
-import com.example.springstart.domain.user.dto.JoinRequestDto;
-import com.example.springstart.domain.user.dto.LoginRequestDto;
-import com.example.springstart.domain.user.dto.TokenResponseDto;
+import com.example.springstart.domain.user.dto.*;
+import com.example.springstart.domain.user.entity.User;
 
 
 public interface AuthService {
@@ -13,4 +12,6 @@ public interface AuthService {
     void logout(String bearerToken);
 
     TokenResponseDto refresh(String bearerToken);
+
+    public BanResponseDto banUser(BanRequestDto dto);
 }

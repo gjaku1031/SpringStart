@@ -1,8 +1,6 @@
 package com.example.springstart.controller;
 
-import com.example.springstart.domain.user.dto.JoinRequestDto;
-import com.example.springstart.domain.user.dto.LoginRequestDto;
-import com.example.springstart.domain.user.dto.TokenResponseDto;
+import com.example.springstart.domain.user.dto.*;
 import com.example.springstart.domain.user.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +58,7 @@ public class AuthController {
      * 로그아웃 API
      * - 클라이언트가 보낸 액세스 토큰을 무효화 처리.
      * - 실제 구현에서는 서버 측에서 JWT를 강제 만료시킬 수 없기 때문에,
-     *   일반적으로 블랙리스트 처리하거나, 클라이언트 측에서 토큰을 삭제하도록 유도한다.
+     * 일반적으로 블랙리스트 처리하거나, 클라이언트 측에서 토큰을 삭제하도록 유도한다.
      *
      * @param bearerToken Authorization 헤더에서 전달된 액세스 토큰 (예: "Bearer xxxxx")
      * @return HTTP 204 (No Content) - 성공적으로 로그아웃됨
@@ -96,5 +94,13 @@ public class AuthController {
         log.info("토큰 재발급 성공 - 새로운 액세스 토큰 발급됨");
 
         return ResponseEntity.ok(tokenResponseDto);
+    }
+
+    @PostMapping("/ban")
+    public ResponseEntity<BanResponseDto> ban(@Valid @RequestBody BanRequestDto dto) {
+
+        BanResponseDto banResponseDto = authService.banUser(dto);
+        log.info("{}을 ban 함", dto.getUsername());
+        return ResponseEntity.ok(banResponseDto);
     }
 }
