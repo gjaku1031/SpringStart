@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,42 +27,55 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        log.info("JWT Authentication Filter - shouldNotFilter");
-//        System.out.println(request.getRequestURI());
-//        return request.getRequestURI().equals("/swagger-ui/index.html#/");
-//    }
-
-    /**
-     * HTTP 요청이 들어올 때마다 실행되는 필터 메서드
-     * JWT 토큰을 검증하고, 유효한 경우 SecurityContext에 저장한다.
-     *
-     * @param request  HTTP 요청 객체
-     * @param response HTTP 응답 객체
-     * @param filterChain 필터 체인 (다음 필터로 요청을 넘기기 위해 사용)
-     * @throws ServletException 서블릿 예외 발생 시
-     * @throws IOException 입출력 예외 발생 시
-     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 1. HTTP 요청 헤더에서 Authorization 값을 가져와 JWT 토큰을 안전하게 추출
+        // 1. 요청 헤더에서 "Authorization" 값을 추출하여 Optional<String>에 저장합니다.
+        //    (예: "Bearer <token>")
         Optional<String> optionalToken = jwtTokenProvider.resolveToken(request.getHeader("Authorization"));
-        // 2. 토큰이 존재하고 유효한 경우, SecurityContext에 Authentication 객체를 설정
-        optionalToken.filter(this::isUsableAccessToken)
-                .map(jwtTokenProvider::getAuthentication)
-                .ifPresent(authentication -> {
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    CustomUserDetails labmdaAuth = (CustomUserDetails) authentication.getPrincipal();
-                    log.info("✅ 사용자 인증 완료: {}", labmdaAuth);
-                    authRef.set(labmdaAuth);
-                });
 
-        // 3. 다음 필터로 요청을 전달
+        // 2. 토큰이 존재하면, 아래 조건들을 만족하는지 확인합니다:
+        //    - 토큰이 유효한지 (만료 여부, 서명 검증 등)
+        //    - 토큰이 블랙리스트에 있지 않은지
+        //    - 토큰에 역할(Role) 정보가 포함되어 있는지 등
+        //    조건을 만족하면, jwtTokenProvider의 getAuthentication 메서드를 사용해
+        //    Authentication 객체를 생성하고 이를 Optional<Authentication>으로 반환합니다.
+        Optional<Authentication> authOpt = optionalToken
+                .filter(this::isUsableAccessToken)  // 토큰 유효성 검사: 조건이 false이면 Optional.empty()가 됩니다.
+                .map(jwtTokenProvider::getAuthentication);  // 토큰이 유효하면 Authentication 객체로 매핑
+
+        // 3. 인증 정보(Authentication 객체)가 존재하면, SecurityContextHolder에 설정합니다.
+        //    이렇게 하면 이후 요청에서 스프링 시큐리티가 인증된 사용자로 인식하게 됩니다.
+        authOpt.ifPresent(authentication -> {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // CustomUserDetails는 사용자의 상세 정보를 담은 객체입니다.
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            log.info("✅ 사용자 인증 완료: {}", userDetails);
+        });
+
+        // 4. Optional을 이용하여 CustomUserDetails 객체를 추출합니다.
+        //    만약 authOpt가 empty면, null이 반환됩니다.
+        CustomUserDetails auth = authOpt
+                .map(authentication -> (CustomUserDetails) authentication.getPrincipal())
+                .orElse(null);
+
+        // 5. 만약 인증된 사용자가 존재한다면 추가 로직(예: 차단 여부 확인)을 수행합니다.
+        if (auth != null) {
+            System.out.println("auth = " + auth);
+
+            // isEnabled()는 CustomUserDetails에서 구현된 메서드로,
+            // 사용자의 차단 여부에 따라 false를 반환합니다.
+            if (!auth.isEnabled()) {
+                log.info("밴 당한 사용자 입니다");
+                // 여기서 추가 처리가 가능: 예를 들어, 응답에 403 Forbidden을 반환하거나 추가 로깅 수행
+            }
+        }
+
+        // 6. 다음 필터로 요청을 전달합니다.
         filterChain.doFilter(request, response);
     }
+
 
     /**
      * 액세스 토큰이 유효한지 확인하는 메서드

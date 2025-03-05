@@ -65,11 +65,9 @@ public class AuthServiceImpl implements AuthService {
                 jwtTokenProvider.createAccessToken(user.getUsername(), user.getRole().toString()),
                 jwtTokenProvider.createRefreshToken(user.getUsername())
         );
+
         // 스프링 시큐리티 필터를 통해서 로그인이 처리되었으면
         // CustomUserDetails안에 유저정보가 들어있으니까 그걸통해서 밴여부를 확인하는거져
-        // 이!해! 따봉
-        //내일 밥사드
-        // //ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ 아니에요..림
         // 사용자 밴 여부 확인 로직 이부분 메서드로 빼서 쓰시면 깔끔할듯
         CustomUserDetails customUserDetails = (CustomUserDetails) jwtTokenProvider.getAuthentication(tokenResponseDto.getAccessToken()).getPrincipal();
         if(!customUserDetails.isEnabled()){
