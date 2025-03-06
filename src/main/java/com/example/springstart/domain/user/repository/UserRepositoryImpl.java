@@ -47,8 +47,4 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
 
         return PageableExecutionUtils.getPage(users, pageable, totalCount::fetchOne);
     }
-
-/*    private BooleanExpression searchOption(String username, UserSearchOption searchOption) {
-
-    }*/
 }

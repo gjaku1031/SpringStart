@@ -6,9 +6,11 @@ import com.example.springstart.domain.user.entity.UserRoleType;
 import com.example.springstart.domain.user.jwt.JwtTokenProvider;
 import com.example.springstart.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -27,7 +29,7 @@ public class AuthServiceImpl implements AuthService {
             return;
         }
 
-        if (password.equals(confirmPassword)) {
+        if (!password.equals(confirmPassword)) {
             throw new IllegalArgumentException("New passwords don't match");
         }
 
@@ -51,13 +53,11 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
+            user.updatePasswordErrorCount(user.getPasswordErrorCount() + 1);
+            userRepository.save(user);
+            log.info("{}pwdErrCount = {}", user.getUsername(), user.getPasswordErrorCount());
             throw new IllegalArgumentException("패스워드가 일치하지 않습니다");
         }
-
-        // 이거는 단순히 그냥 DB에서 조회하는거고
- /*       if (user.getBanned()) {
-            throw new IllegalArgumentException("차단된 사용자 입니다");
-        }*/
 
         //회원정보 유효성 검증 후 토큰 발급
 
@@ -73,6 +73,11 @@ public class AuthServiceImpl implements AuthService {
         if(!customUserDetails.isEnabled()){
             System.out.println("너 밴");
             throw new RuntimeException("밴 사용자");
+        }
+
+        if (!customUserDetails.isAccountNonLocked()) {
+            System.out.println("너 임시 정지");
+            throw new RuntimeException("임시 정지 사용자");
         }
 
         return tokenResponseDto;
@@ -119,7 +124,12 @@ public class AuthServiceImpl implements AuthService {
         return new BanResponseDto();
     }
 
-    public LockResponseDto lockUser(LockRequestDto dto) {
-        return null;
+    @Override
+    public UnlockResponseDto unlockUser(UnlockRequestDto dto) {
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        user.updatePasswordErrorCount(0);
+        userRepository.save(user);
+        return new UnlockResponseDto();
     }
 }

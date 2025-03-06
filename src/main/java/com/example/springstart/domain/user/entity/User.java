@@ -30,7 +30,7 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     Boolean Banned = false;
 
-    Integer passwordCount;
+    Integer passwordErrorCount;
 
     @Builder
     public User(String username, String password, UserRoleType role, String email) {
@@ -42,7 +42,7 @@ public class User extends BaseEntity{
 
     @PrePersist
     public void prePersist() {
-        passwordCount = 0;
+        passwordErrorCount = 0;
 
         if (Banned == null) {
             Banned = false;
@@ -60,5 +60,9 @@ public class User extends BaseEntity{
 
     public void updateBan(boolean Banned) {
         this.Banned = Banned;
+    }
+
+    public void updatePasswordErrorCount(int passwordErrorCount) {
+        this.passwordErrorCount = passwordErrorCount;
     }
 }
